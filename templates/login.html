@@ -32,5 +32,25 @@
         </div>
     </div>
 </div>
+
+<script src="{% static 'js/jquery/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/noty/jquery.noty.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/noty/layouts/topRight.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/noty/themes/default.js' %}"></script>
+
+<script>
+{% if messages %}
+    {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            var n = noty({text: '{{ message }}', layout: 'topRight', type: 'success'});
+            n.setTimeout(5000);
+        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            var n = noty({text: '{{ message }}', layout: 'topRight', type: 'error'});
+            n.setTimeout(5000);
+        {% endif %}
+    {% endfor %}
+{% endif %}
+</script>
+
 </body>
 </html>
