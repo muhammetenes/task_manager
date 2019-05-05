@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Todo App - Statistics</title>
+{% endblock title %}
+
+{% block nav_items %}
+    <li class="nav-item">
+        <a class="nav-link font-weight-light" href="{% url 'task:todo_list' %}">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link font-weight-light active">Statistics</a>
+    </li>
+{% endblock nav_items %}
+
+{% block content %}
+    <section id="about col-md-2">
+        <canvas id="myChart" width="400" height="400"></canvas>
+    </section>
+{% endblock content %}
+
+{% block script %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+
+<script>
+    data = {
+        datasets: [{
+            data: [{{ percentages_list.0 }}, {{ percentages_list.1 }}],
+            backgroundColor: ['rgb(0,155,255)', 'rgb(0,255,114)']
+        }],
+        // These labels appear in the legend and in the tooltips when hovering different arcs
+        labels: [
+            'Completed ({{ objs_count_list.completed_count }})',
+            'Not Completed ({{ objs_count_list.not_completed_count }})'
+        ]
+    };
+
+
+    var options = {
+        responsive: true,
+        maintainAspectRatio: false,
+    };
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    ctx.width = 500;
+    ctx.height = 500;
+    var myDoughnutChart = new Chart(ctx, {
+        type: 'pie',
+        data: data,
+        options: options
+    });
+</script>
+{% endblock script %}

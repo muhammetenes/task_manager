@@ -1,5 +1,5 @@
 .idea/
 .vagrant/
-
+*.sqlite3
 *.pyc
 

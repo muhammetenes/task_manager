@@ -1,0 +1,21 @@
+<tr>
+    <th scope="row">{{ object.user.first_name }} {{ object.user.last_name }}</th>
+    <td>{{ object.text }}</td>
+    <td class="todo_status">{% if object.is_completed %}
+        <button class="btn btn-success btn-sm">Completed</button>
+    {% else %}
+        <button class="btn btn-light btn-sm">Not Completed</button>
+    {% endif %}
+    </td>
+    <td>{{ object.created_time }}</td>
+    <td>{{ object.last_updated }}</td>
+    <td>
+        {% if object.is_completed and request.user.id == object.user_id %}
+            <button type="button" class="btn btn-dark btn-sm todo_uncomplete" data-href="{% url 'task:todo_update_uncomplete' id=object.id %}">Uncomplete</button>
+        {% elif request.user.id == object.user_id %}
+            <button type="button" class="btn btn-info btn-sm todo_complete" data-href="{% url 'task:todo_update_complete' id=object.id %}">Complete</button>
+        {% endif %}
+
+        <button type="button" class="btn btn-danger btn-sm"><a href="{% url 'task:todo_delete' id=object.id %}">Delete</a></button>
+    </td>
+</tr>

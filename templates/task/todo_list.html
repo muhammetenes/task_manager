@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Todo App - Home</title>
+{% endblock title %}
+
+{% block nav_items %}
+    <li class="nav-item">
+        <a class="nav-link font-weight-light active" href="{% url 'task:todo_list' %}">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link font-weight-light" href="{% url 'task:user_statistics' %}">Statistics</a>
+    </li>
+{% endblock nav_items %}
+
+{% block content %}
+
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <h2 class="col-md-12">Todo App</h2>
+                <p class="col-md-12">A simple todo app</p>
+                <div class="col-md-12 mb-2">
+                    <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal">Create</button>
+                    <button type="button" class="btn btn-outline-warning import_csv_btn">Import</button>
+                    <form enctype="multipart/form-data" style="display: none" id="todo_import_form" method="post" action="{% url 'task:todo_import' %}">
+                        {% csrf_token %}
+                        <input type="file" name="csv_file" id="csv_file_input_id">
+                    </form>
+                    <button type="button" class="btn btn-outline-dark float-right"><a href="{% url 'task:todo_export' %}">Export</a></button>
+                </div>
+                <div class="col-lg-12 mx-auto">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">User</th>
+                            <th scope="col">Todo</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Updated</th>
+                            <th scope="col">Operations</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for todo in object_list %}
+                        <tr>
+                            <th scope="row">{{ todo.user.first_name }} {{ todo.user.last_name }}</th>
+                            <td>{{ todo.text }}</td>
+                            <td class="todo_status">{% if todo.is_completed %}
+                                <button class="btn btn-success btn-sm">Completed</button>
+                                {% else %}
+                                <button class="btn btn-light btn-sm">Not Completed</button>
+                                {% endif %}
+                            </td>
+                            <td>{{ todo.created_time }}</td>
+                            <td>{{ todo.last_updated }}</td>
+                            <td>
+                            {% if request.user.id == todo.user_id %}
+                                {% if todo.is_completed %}
+                                <button type="button" class="btn btn-dark btn-sm todo_uncomplete" data-href="{% url 'task:todo_update_uncomplete' id=todo.id %}">Uncomplete</button>
+                                {% else %}
+                                <button type="button" class="btn btn-info btn-sm todo_complete" data-href="{% url 'task:todo_update_complete' id=todo.id %}">Complete</button>
+                                {% endif %}
+
+                                <button type="button" class="btn btn-danger btn-sm"><a href="{% url 'task:todo_delete' id=todo.id %}">Delete</a></button>
+                            {% else %}
+                                {% if todo.is_completed %}
+                                <button type="button" class="btn btn-dark btn-sm not_allowed">Uncomplete</button>
+                                {% else %}
+                                <button type="button" class="btn btn-info btn-sm not_allowed">Complete</button>
+                                {% endif %}
+
+                                <button type="button" class="btn btn-danger btn-sm not_allowed">Delete</button>
+                            {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
+                    {% endif %}
+                    <li class="page-item"><a class="page-link">{{ page_obj.number }}</a></li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+        </div>
+    </section>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Todo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'task:todo_create' %}" id="task_create_form">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            {{ form }}
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="task_create_btn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+
+    $('#task_create_btn').click(function () {
+        $('#task_create_form').submit();
+    });
+
+    $(document).on('click', '.todo_complete', function () {
+        var elem = $(this);
+        var url = elem.attr('data-href');
+        todo_update(url, 'complete', elem)
+    });
+
+    $(document).on('click', '.todo_uncomplete', function () {
+        var elem = $(this);
+        var url = elem.attr('data-href');
+        todo_update(url, 'uncomplete', elem)
+    });
+
+    function todo_update(url, status, elem) {
+        $.ajax({
+            url:url,
+            method:'get',
+            success:function (data) {
+                var tr = elem.parent().parent();
+                //Added updated row
+                $(data).insertAfter(tr);
+                // Delete row
+                tr.remove();
+
+                var notfi = noty({text: 'Todo Updated', layout: 'topRight', type: 'success'});
+                notfi.setTimeout(5000);
+            },
+            error:function (data) {
+                var notfi = noty({text: 'Error', layout: 'topRight', type: 'error'});
+                notfi.setTimeout(5000);
+            }
+        })
+    }
+
+    $(document).on('click', '.not_allowed', function () {
+        var notfi = noty({text: 'Not Allowed', layout: 'topRight', type: 'error'});
+        notfi.setTimeout(5000);
+    });
+    
+    $('#csv_file_input_id').change(function () {
+        $('#todo_import_form').submit()
+    });
+    
+    $('.import_csv_btn').click(function () {
+        $('#csv_file_input_id').trigger('click')
+    })
+</script>
+
+{% endblock script %}
