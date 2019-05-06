@@ -19,7 +19,7 @@ from task.forms import TodoForm, LoginForm
 from task.models import Todo
 
 __all__ = ('LogoutView', 'UserLoginView', 'HomePageRedirectView', 'TodoListView', 'TodoCreateView', 'TodoDeleteView',
-           'TodoUpdateView', 'TodoExportView', 'TodoImportView')
+           'TodoUpdateView', 'TodoExportView', 'TodoImportView', 'UserStatisticsView')
 
 
 class LogoutView(LoginRequiredMixin, RedirectView):
@@ -81,6 +81,10 @@ class HomePageRedirectView(RedirectView):
         if self.request.user.is_authenticated:
             return reverse('task:todo_list')
         return reverse('login')
+
+
+class UserProfileView(TemplateView):
+    template_name = 'user_profile.html'
 
 
 class TodoListView(LoginRequiredMixin, ListView):

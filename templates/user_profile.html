@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Todo App - Home</title>
+{% endblock title %}
+
+{% block nav_items %}
+    <li class="nav-item">
+        <a class="nav-link font-weight-light" href="{% url 'task:todo_list' %}">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link font-weight-light" href="{% url 'task:user_statistics' %}">Statistics</a>
+    </li>
+{% endblock nav_items %}
+
+{% block content %}
+
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <h2 class="col-md-12">User Information</h2>
+                <p class="col-md-12">Full Name: {{ request.user.first_name }} {{ request.user.last_name }}</p>
+                <p class="col-md-12">Email: {{ request.user.email }}</p>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+
+    $('#task_create_btn').click(function () {
+        $('#task_create_form').submit();
+    });
+
+    $(document).on('click', '.todo_complete', function () {
+        var elem = $(this);
+        var url = elem.attr('data-href');
+        todo_update(url, 'complete', elem)
+    });
+
+    $(document).on('click', '.todo_uncomplete', function () {
+        var elem = $(this);
+        var url = elem.attr('data-href');
+        todo_update(url, 'uncomplete', elem)
+    });
+
+    function todo_update(url, status, elem) {
+        $.ajax({
+            url:url,
+            method:'get',
+            success:function (data) {
+                var tr = elem.parent().parent();
+                //Added updated row
+                $(data).insertAfter(tr);
+                // Delete row
+                tr.remove();
+
+                var notfi = noty({text: 'Todo Updated', layout: 'topRight', type: 'success'});
+                notfi.setTimeout(5000);
+            },
+            error:function (data) {
+                var notfi = noty({text: 'Error', layout: 'topRight', type: 'error'});
+                notfi.setTimeout(5000);
+            }
+        })
+    }
+
+    $(document).on('click', '.not_allowed', function () {
+        var notfi = noty({text: 'Not Allowed', layout: 'topRight', type: 'error'});
+        notfi.setTimeout(5000);
+    });
+    
+    $('#csv_file_input_id').change(function () {
+        $('#todo_import_form').submit()
+    });
+    
+    $('.import_csv_btn').click(function () {
+        $('#csv_file_input_id').trigger('click')
+    })
+</script>
+
+{% endblock script %}

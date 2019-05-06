@@ -1,6 +1,7 @@
 from django.urls import path
 
-from task.views import TodoListView, TodoCreateView, TodoDeleteView, TodoUpdateView, TodoExportView, TodoImportView, UserStatisticsView
+from task.views import TodoListView, TodoCreateView, TodoDeleteView, TodoUpdateView, TodoExportView, TodoImportView, \
+    UserStatisticsView, UserProfileView
 
 app_name = 'task'
 
@@ -16,4 +17,5 @@ urlpatterns = [
     path('todo_import/', TodoImportView.as_view(), name='todo_import'),
 
     path('user_statistics/', UserStatisticsView.as_view(), name='user_statistics'),
+    path('user_profile/', UserProfileView.as_view(), name='user_profile'),
 ]

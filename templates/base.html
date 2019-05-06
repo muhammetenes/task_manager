@@ -37,7 +37,7 @@
             User
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-            <button class="dropdown-item" type="button">Profile</button>
+            <button class="dropdown-item" type="button"><a href="{% url 'task:user_profile' %}">Profile</a></button>
             <button class="dropdown-item" type="button"><a href="{% url 'logout' %}">Logout</a></button>
           </div>
         </div>
