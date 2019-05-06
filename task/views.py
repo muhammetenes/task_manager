@@ -106,7 +106,7 @@ class TodoCreateView(LoginRequiredMixin, CreateView):
         task = form.save(commit=False)
         task.user_id = self.request.user.id
         task.save()
-        messages.success(self.request, _(u'Todo created'))
+        messages.success(self.request, _('Todo was created'))
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -127,7 +127,7 @@ class TodoDeleteView(LoginRequiredMixin, DeleteView):
         object = self.get_object()
         success_url = self.get_success_url()
         object.delete()
-        messages.success(self.request, _(u'Todo deleted'))
+        messages.success(self.request, _('Todo was deleted'))
         return redirect(success_url)
 
 
@@ -180,7 +180,7 @@ class TodoImportView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         csv_file = request.FILES.get('csv_file')
         if not csv_file.content_type == 'text/csv':
-            messages.error(request, _(u'Format error!'))
+            messages.error(request, _('Format error!'))
             return redirect(self.success_url)
         dataset = csv_file.read().decode('UTF-8')
         io_string = io.StringIO(dataset)
@@ -191,7 +191,7 @@ class TodoImportView(LoginRequiredMixin, View):
             status = True if row[1] == 'Completed' else False
             objs.append(self.model(user_id=request.user.id, text=row[0], is_completed=status))
         self.bulk_create(iter(objs))
-        messages.success(request, 'Todo created')
+        messages.success(request, _('Todo was created'))
 
         return redirect(self.success_url)
 

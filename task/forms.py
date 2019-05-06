@@ -8,62 +8,62 @@ from task.models import Todo
 
 class LoginForm(forms.Form):
     email = forms.CharField(
-        label=_(u'Email'),
+        label=_('Email'),
         max_length=100,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': _(u'Email'),
+            'placeholder': _('Email'),
         })
     )
     password = forms.CharField(
-        label=_(u'Password'),
+        label=_('Password'),
         max_length=100,
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': _(u'Password'),
+            'placeholder': _('Password'),
         })
     )
 
 
 class SignUpForm(forms.Form):
     first_name = forms.CharField(
-        label=_(u'First Name'),
+        label=_('First Name'),
         max_length=100,
         widget=forms.TextInput(attrs={
             'class': 'form-control signupName',
-            'placeholder': _(u'First Name'),
+            'placeholder': _('First Name'),
         })
     )
     last_name = forms.CharField(
-        label=_(u'Last Name'),
+        label=_('Last Name'),
         max_length=100,
         widget=forms.TextInput(attrs={
             'class': 'form-control signupLastName',
-            'placeholder': _(u'Last Name'),
+            'placeholder': _('Last Name'),
         })
     )
     email_address = forms.CharField(
-        label=_(u'Email Address'),
+        label=_('Email Address'),
         max_length=100,
         widget=forms.EmailInput(attrs={
             'class': 'form-control signupEmail',
-            'placeholder': _(u'Email Address'),
+            'placeholder': _('Email Address'),
         })
     )
     password = forms.CharField(
-        label=_(u'Password'),
+        label=_('Password'),
         max_length=100,
         widget=forms.PasswordInput(attrs={
             'class': 'form-control signupPassword',
-            'placeholder': _(u'Password'),
+            'placeholder': _('Password'),
         })
     )
     confirm_password = forms.CharField(
-        label=_(u'Confirm Password'),
+        label=_('Confirm Password'),
         max_length=100,
         widget=forms.PasswordInput(attrs={
             'class': 'form-control signupPasswordConfirm',
-            'placeholder': _(u'Confirm Password'),
+            'placeholder': _('Confirm Password'),
         })
     )
 
