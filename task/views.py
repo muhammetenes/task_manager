@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404, render
@@ -92,7 +93,7 @@ class TodoListView(LoginRequiredMixin, ListView):
     paginate_by = 4
     form_class = TodoForm
     
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         context = super(TodoListView, self).get_context_data(**kwargs)
         context['form'] = self.form_class
         return context
@@ -102,6 +103,7 @@ class TodoCreateView(LoginRequiredMixin, CreateView):
     model = Todo
     fields = ['text']
 
+    @transaction.atomic
     def form_valid(self, form):
         task = form.save(commit=False)
         task.user_id = self.request.user.id
@@ -123,6 +125,7 @@ class TodoDeleteView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         return reverse('task:todo_list')
 
+    @transaction.atomic
     def get(self, request, *args, **kwargs):
         object = self.get_object()
         success_url = self.get_success_url()
@@ -135,8 +138,7 @@ class TodoUpdateView(LoginRequiredMixin, AjaxResponseMixin, UpdateView):
     model = Todo
 
     def get_object(self, queryset=None):
-        _id = self.kwargs.get('id')
-        return get_object_or_404(self.model, id=_id, user_id=self.request.user.id)
+        return get_object_or_404(self.model, id=self.kwargs.get('id'), user_id=self.request.user.id)
 
     def get_ajax(self, request, *args, **kwargs):
         object = self.get_object()
@@ -177,6 +179,7 @@ class TodoImportView(LoginRequiredMixin, View):
                 break
             self.model.objects.bulk_create(batch)
 
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         csv_file = request.FILES.get('csv_file')
         if not csv_file.content_type == 'text/csv':
