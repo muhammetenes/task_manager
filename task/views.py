@@ -142,9 +142,9 @@ class TodoUpdateView(LoginRequiredMixin, AjaxResponseMixin, UpdateView):
 
     def get_ajax(self, request, *args, **kwargs):
         object = self.get_object()
-        if '/complete/' in request.path:
+        if reverse('task:todo_update_complete', kwargs={'id': kwargs.get('id')}) == request.path:
             object.is_completed = True
-        elif '/uncomplete/' in request.path:
+        elif reverse('task:todo_update_uncomplete', kwargs={'id': kwargs.get('id')}) == request.path:
             object.is_completed = False
         object.save(update_fields=['is_completed', 'last_updated'])
         return render(request, 'task/todo_list_single_row.html', {'object': object})
