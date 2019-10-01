@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import json
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
@@ -8,7 +6,7 @@ from django.http import HttpResponse
 from django.utils import six
 
 
-class JSONResponseMixin(object):
+class JSONResponseMixin:
     """
     A mixin that allows you to easily serialize simple data such as a dict or
     Django models.
@@ -55,7 +53,7 @@ class JSONResponseMixin(object):
         return HttpResponse(json_data, content_type=self.get_content_type())
 
 
-class AjaxResponseMixin(object):
+class AjaxResponseMixin:
     """
     Mixin allows you to define alternative methods for ajax requests. Similar
     to the normal get, post, and put methods, you can use get_ajax, post_ajax,
@@ -72,8 +70,7 @@ class AjaxResponseMixin(object):
             self.kwargs = kwargs
             return handler(request, *args, **kwargs)
 
-        return super(AjaxResponseMixin, self).dispatch(
-            request, *args, **kwargs)
+        return super(AjaxResponseMixin, self).dispatch(request, *args, **kwargs)
 
     def get_ajax(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
